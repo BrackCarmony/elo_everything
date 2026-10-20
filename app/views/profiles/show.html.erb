@@ -1,0 +1,26 @@
+<% content_for :title, @user.display_name %>
+<section class="card">
+  <h1><%= @user.display_name %></h1>
+  <% if @ratings.any? %>
+    <table>
+      <thead><tr><th>Category</th><th class="num">Answered</th><th class="num">Right</th><th class="num">Rating</th></tr></thead>
+      <tbody>
+        <% @ratings.each do |r| %>
+          <tr><td><%= link_to r.category.name.titleize, r.category %></td><td class="num"><%= r.answered_count %></td><td class="num"><%= r.correct_count %></td><td class="num"><%= r.rating.round %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="muted">You haven't answered anything yet. <%= link_to "Pick a category", root_path %>.</p>
+  <% end %>
+</section>
+<% if @attempts.any? %>
+  <section class="card">
+    <h2>Recent answers</h2>
+    <ul class="recent">
+      <% @attempts.each do |a| %>
+        <li><span class="dot dot-<%= a.outcome %>"></span><%= a.question.body %> <span class="delta <%= a.total_change >= 0 ? "up" : "down" %>"><%= format("%+.1f", a.total_change) %></span></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

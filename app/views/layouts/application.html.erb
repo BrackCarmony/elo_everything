@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Elo Everything" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Elo Everything">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+  </head>
+
+  <body>
+    <header class="topbar">
+      <nav class="wrap nav">
+        <%= link_to "Elo Everything", root_path, class: "brand" %>
+        <div class="nav-links">
+          <% if authenticated? %>
+            <%= link_to "Profile", profile_path %>
+            <%= button_to "Sign out", session_path, method: :delete, class: "link-button" %>
+          <% else %>
+            <%= link_to "Sign in", new_session_path %>
+            <%= link_to "Sign up", new_registration_path, class: "button small" %>
+          <% end %>
+        </div>
+      </nav>
+    </header>
+    <main class="wrap">
+      <% flash.each do |type, message| %>
+        <p class="flash flash-<%= type %>"><%= message %></p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

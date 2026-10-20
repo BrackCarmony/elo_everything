@@ -1,0 +1,40 @@
+<% content_for :title, @category.name.titleize %>
+<section class="card row">
+  <div>
+    <h1><%= @category.name.titleize %></h1>
+    <p class="muted"><%= number_with_delimiter(@category.questions_count) %> questions</p>
+  </div>
+  <div class="right">
+    <% if @my_rating %>
+      <div class="rating big"><%= @my_rating.rating.round %></div>
+      <div class="muted"><%= @my_rating.correct_count %> right · <%= @my_rating.wrong_count %> wrong · <%= @my_rating.passed_count %> passed</div>
+    <% end %>
+    <%= link_to(@my_rating ? "Keep playing" : "Start playing", category_play_path(@category), class: "button") %>
+  </div>
+</section>
+
+<div class="two-col">
+  <section class="card">
+    <h2>Leaderboard</h2>
+    <% if @leaders.any? %>
+      <table>
+        <thead><tr><th>#</th><th>Player</th><th class="num">Answered</th><th class="num">Rating</th></tr></thead>
+        <tbody>
+          <% @leaders.each.with_index(1) do |r, i| %>
+            <tr><td><%= i %></td><td><%= r.user.display_name %></td><td class="num"><%= r.answered_count %></td><td class="num"><%= r.rating.round %></td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="muted">Nobody has played this category yet.</p>
+    <% end %>
+  </section>
+  <section class="card">
+    <h2>Hardest questions</h2>
+    <ol class="hardest">
+      <% @hardest.each do |qr| %>
+        <li><span><%= qr.question.body %></span> <span class="rating"><%= qr.rating.round %></span></li>
+      <% end %>
+    </ol>
+  </section>
+</div>

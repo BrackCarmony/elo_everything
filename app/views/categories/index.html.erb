@@ -1,0 +1,16 @@
+<% content_for :title, "Elo Everything" %>
+<section class="hero">
+  <h1>How much do you know about everything?</h1>
+  <p class="muted">Every player and every question has an Elo rating in each category. Answer right and you take points from the question; miss and it takes points from you.</p>
+</section>
+
+<div class="grid">
+  <% @categories.each do |category| %>
+    <% mine = @my_ratings[category.id] %>
+    <%= link_to category, class: "tile" do %>
+      <span class="tile-name"><%= category.name.titleize %></span>
+      <span class="muted"><%= number_with_delimiter(category.questions_count) %> questions</span>
+      <span class="rating"><%= mine ? mine.rating.round : "—" %></span>
+    <% end %>
+  <% end %>
+</div>

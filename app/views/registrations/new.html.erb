@@ -1,0 +1,18 @@
+<% content_for :title, "Sign up" %>
+<section class="card narrow">
+  <h1>Create an account</h1>
+  <%= form_with model: @user, url: registration_path, class: "stack" do |form| %>
+    <% if @user.errors.any? %>
+      <ul class="errors"><% @user.errors.full_messages.each do |m| %><li><%= m %></li><% end %></ul>
+    <% end %>
+    <%= form.label :display_name %>
+    <%= form.text_field :display_name, required: true, maxlength: 40, autofocus: true %>
+    <%= form.label :email_address, "Email" %>
+    <%= form.email_field :email_address, required: true, autocomplete: "username" %>
+    <%= form.label :password %>
+    <%= form.password_field :password, required: true, autocomplete: "new-password", maxlength: 72 %>
+    <%= form.label :password_confirmation, "Confirm password" %>
+    <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", maxlength: 72 %>
+    <%= form.submit "Sign up", class: "button" %>
+  <% end %>
+</section>

@@ -1,0 +1,19 @@
+water_everything:
+  question: water
+  category: everything
+  rating: 1200
+
+water_science:
+  question: water
+  category: science
+  rating: 1300
+
+water_chemistry:
+  question: water
+  category: chemistry
+  rating: 1400
+
+capital_everything:
+  question: capital
+  category: everything
+  rating: 1250

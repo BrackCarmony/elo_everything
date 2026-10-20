@@ -1,0 +1,19 @@
+<% content_for :title, "#{@category.name.titleize} quiz" %>
+<section class="card quiz">
+  <div class="row muted">
+    <%= link_to "← #{@category.name.titleize}", @category %>
+    <span>Your rating: <strong><%= @rating.round %></strong></span>
+  </div>
+  <% if @question.picture_url.present? %>
+    <%= image_tag @question.picture_url, alt: "", class: "question-picture", loading: "lazy" %>
+  <% end %>
+  <h1 class="question"><%= @question.body %></h1>
+  <%= form_with url: category_answers_path(@category), class: "answers" do |form| %>
+    <%= hidden_field_tag :question_id, @question.id %>
+    <% @answers.each do |answer| %>
+      <%= form.button answer, name: "answer", value: answer, class: "answer" %>
+    <% end %>
+    <%= form.button "Pass", name: "pass", value: "1", class: "pass" %>
+  <% end %>
+  <p class="muted small">Passing scores as a random guess, so it costs a little less than a wrong answer.</p>
+</section>

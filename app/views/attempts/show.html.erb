@@ -1,0 +1,26 @@
+<% content_for :title, "Result" %>
+<section class="card quiz">
+  <p class="verdict verdict-<%= @attempt.outcome %>">
+    <%= { "correct" => "Correct!", "wrong" => "Not quite.", "pass" => "Passed." }[@attempt.outcome] %>
+  </p>
+  <h1 class="question"><%= @question.body %></h1>
+  <p>Answer: <strong><%= @question.correct_answer %></strong>
+    <% if @attempt.outcome == "wrong" %><span class="muted">(you said <%= @attempt.answer %>)</span><% end %></p>
+  <p class="muted small"><%= @question.answered_count %> players have answered this; <%= number_to_percentage(100.0 * @question.correct_count / [ @question.answered_count, 1 ].max, precision: 0) %> got it right.</p>
+
+  <table class="changes">
+    <tbody>
+      <% @changes.each do |c| %>
+        <tr class="<%= "tag" unless @main_ids.include?(c["category_id"]) %>">
+          <td><%= c["category_name"].titleize %></td>
+          <td class="num delta <%= c["change"] >= 0 ? "up" : "down" %>"><%= format("%+.1f", c["change"]) %></td>
+          <td class="num"><%= c["user_rating"] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @category %>
+    <%= link_to "Next question", category_play_path(@category), class: "button", autofocus: true %>
+  <% end %>
+</section>

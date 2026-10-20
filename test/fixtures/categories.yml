@@ -1,0 +1,14 @@
+everything:
+  name: everything
+  kind: category
+  questions_count: 2
+
+science:
+  name: science
+  kind: category
+  questions_count: 1
+
+chemistry:
+  name: chemistry
+  kind: tag
+  questions_count: 1
