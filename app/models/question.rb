@@ -15,6 +15,12 @@ class Question < ApplicationRecord
 
   def correct?(answer) = answer.to_s.strip == correct_answer.strip
 
+  # The old app stored S3 keys like "eloeverything/abc.png" and prefixed the S3 host in its templates.
+  def picture_src
+    return if picture_url.blank?
+    picture_url.start_with?("http://", "https://") ? picture_url : "https://s3.amazonaws.com/#{picture_url}"
+  end
+
   private
 
   def has_wrong_answers

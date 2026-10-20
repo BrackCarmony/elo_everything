@@ -3,6 +3,9 @@
   <p class="verdict verdict-<%= @attempt.outcome %>">
     <%= { "correct" => "Correct!", "wrong" => "Not quite.", "pass" => "Passed." }[@attempt.outcome] %>
   </p>
+  <% if @question.picture_src %>
+    <%= image_tag @question.picture_src, alt: "", class: "question-picture" %>
+  <% end %>
   <h1 class="question"><%= @question.body %></h1>
   <p>Answer: <strong><%= @question.correct_answer %></strong>
     <% if @attempt.outcome == "wrong" %><span class="muted">(you said <%= @attempt.answer %>)</span><% end %></p>

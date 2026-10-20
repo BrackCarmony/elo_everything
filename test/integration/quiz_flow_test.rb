@@ -35,4 +35,14 @@ class QuizFlowTest < ActionDispatch::IntegrationTest
     assert_select ".tile-name", text: "Science"
     assert_select ".tile-name", text: "Chemistry", count: 0
   end
+
+  test "a picture question shows its S3 image" do
+    sign_in_as users(:one)
+    questions(:water).update!(picture_url: "eloeverything/0w6uFdq2SR15qChV.png")
+
+    get category_play_path(categories(:chemistry))
+
+    assert_response :success
+    assert_select "img.question-picture[src=?]", "https://s3.amazonaws.com/eloeverything/0w6uFdq2SR15qChV.png"
+  end
 end

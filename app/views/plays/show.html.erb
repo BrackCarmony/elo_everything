@@ -4,8 +4,8 @@
     <%= link_to "← #{@category.name.titleize}", @category %>
     <span>Your rating: <strong><%= @rating.round %></strong></span>
   </div>
-  <% if @question.picture_url.present? %>
-    <%= image_tag @question.picture_url, alt: "", class: "question-picture", loading: "lazy" %>
+  <% if @question.picture_src %>
+    <%= image_tag @question.picture_src, alt: "", class: "question-picture" %>
   <% end %>
   <h1 class="question"><%= @question.body %></h1>
   <%= form_with url: category_answers_path(@category), class: "answers" do |form| %>
