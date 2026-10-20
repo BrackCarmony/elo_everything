@@ -56,3 +56,13 @@ namespace :elo do
     puts "Done: #{Category.count} categories (#{Category.main.count} main), #{Question.count} questions, #{QuestionRating.count} ratings."
   end
 end
+
+namespace :elo do
+  desc "Promote every tag that already has Category::PROMOTION_THRESHOLD questions to a main category"
+  task promote_tags: :environment do
+    ready = Category.tags.where(questions_count: Category::PROMOTION_THRESHOLD..)
+    names = ready.order(questions_count: :desc).pluck(:name)
+    ready.update_all(kind: "category", updated_at: Time.current)
+    puts names.any? ? "Promoted #{names.size}: #{names.join(', ')}" : "No tags are ready."
+  end
+end

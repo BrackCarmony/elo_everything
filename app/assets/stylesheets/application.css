@@ -33,7 +33,7 @@ h1 { font-size: 1.6rem; } h2 { font-size: 1.15rem; }
 .right { text-align: right; display: grid; gap: 6px; justify-items: end; }
 .stack { display: grid; gap: 8px; }
 /* Text fields only: the submit button keeps the .button look. */
-.stack input:not([type=submit]) { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: var(--bg); color: var(--ink); }
+.stack textarea, .stack input:not([type=submit]) { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: var(--bg); color: var(--ink); }
 .stack .button { margin-top: 8px; }
 .errors { color: var(--down); margin: 0; padding-left: 18px; }
 .hero { margin-bottom: 20px; } .hero p { max-width: 60ch; }
@@ -68,3 +68,12 @@ th { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: 
 .recent .delta { margin-left: auto; font-variant-numeric: tabular-nums; }
 .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--muted); }
 .dot-correct { background: var(--up); } .dot-wrong { background: var(--down); }
+fieldset { border: 0; padding: 0; margin: 8px 0 0; display: grid; gap: 8px; }
+legend { font-weight: 600; padding: 0; margin-bottom: 4px; }
+.rows { display: grid; gap: 6px; }
+.input-row { display: flex; gap: 6px; }
+.input-row input { flex: 1; min-width: 0; padding: 9px 10px; border: 1px solid var(--line); border-radius: 6px; font: inherit; background: var(--bg); color: var(--ink); }
+.icon-button { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 6px; width: 38px; font-size: 1.1rem; cursor: pointer; }
+.stack .link-button { justify-self: start; }
+.progress { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.progress span { display: block; height: 100%; background: var(--accent); }

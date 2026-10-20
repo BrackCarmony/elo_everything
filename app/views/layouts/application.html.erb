@@ -20,6 +20,7 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
@@ -28,6 +29,7 @@
         <%= link_to "Elo Everything", root_path, class: "brand" %>
         <div class="nav-links">
           <% if authenticated? %>
+            <%= link_to "Add a question", new_question_path %>
             <%= link_to "Profile", profile_path %>
             <%= button_to "Sign out", session_path, method: :delete, class: "link-button" %>
           <% else %>

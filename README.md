@@ -50,9 +50,21 @@ change   = 15 * (score - expected)                                    # score: 1
   safe to re-run. The same pattern applies to syncing inventory from a partner's API.
 - **Users weren't imported.** They hold personal data (emails, Facebook ids) the app doesn't need.
 
+## Writing questions, tags and categories
+
+Signed-in players add questions at **Add a question** (`QuestionSubmission` in `app/forms/`, a form object rather than a model,
+because one submission touches questions, ratings and categories). Each question:
+
+- starts at rating 1200 in every tag it gets, plus `everything` (and `picture` if it has an image link);
+- can create new tags (typed names are lowercased; `create_or_find_by!` on the unique name index makes simultaneous new tags safe);
+- bumps `questions_count` with an SQL increment, and any tag that reaches `Category::PROMOTION_THRESHOLD` (100) becomes a main category.
+
+The old app had no automatic rule: an admin flipped a tag's status by hand, which is why the imported data has 35 tags over 100
+questions (e.g. "spanish vocab" at 467) and categories as small as 62. `bin/rails elo:promote_tags` applies the rule to existing data.
+
 ## Ideas to extend
 
-- Question submission and complaints (the dump has 410 complaints).
+- Complaints (the dump has 410).
 - A rating-history chart per category from `attempts.rating_changes`.
 - Hotwire: swap the result in place with a Turbo Frame instead of a redirect.
 - Background job (Solid Queue) to recompute `categories.questions_count`.

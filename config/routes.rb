@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resource :play, only: :show, controller: "plays"
     resources :answers, only: :create
   end
+  resources :questions, only: %i[new create]
   resources :attempts, only: :show
   resource :profile, only: :show
 

@@ -1,0 +1,49 @@
+<% content_for :title, "Add a question" %>
+<section class="card quiz">
+  <h1>Add a question</h1>
+  <p class="muted">New questions start at a rating of 1200 in every category you tag them with, then find their level as people answer them.
+    A tag becomes a main category once it has <%= Category::PROMOTION_THRESHOLD %> questions.</p>
+
+  <%= form_with model: @submission, url: questions_path, scope: :question_submission, class: "stack" do |form| %>
+    <% if @submission.errors.any? %>
+      <ul class="errors"><% @submission.errors.full_messages.each do |m| %><li><%= m %></li><% end %></ul>
+    <% end %>
+
+    <%= form.label :body, "Question" %>
+    <%= form.text_area :body, rows: 3, required: true, maxlength: 500 %>
+
+    <%= form.label :correct_answer %>
+    <%= form.text_field :correct_answer, required: true, maxlength: 200 %>
+
+    <fieldset data-controller="rows" data-rows-max-value="<%= QuestionSubmission::MAX_WRONG_ANSWERS %>">
+      <legend>Wrong answers</legend>
+      <div data-rows-target="list" class="rows">
+        <% @submission.wrong_answers.each do |answer| %>
+          <%= render "row", field: "wrong_answers", value: answer, placeholder: "Wrong answer" %>
+        <% end %>
+      </div>
+      <template data-rows-target="template"><%= render "row", field: "wrong_answers", value: "", placeholder: "Wrong answer" %></template>
+      <button type="button" class="link-button" data-action="rows#add">+ Add a wrong answer</button>
+    </fieldset>
+
+    <fieldset data-controller="rows" data-rows-max-value="<%= QuestionSubmission::MAX_TAGS %>">
+      <legend>Categories and tags</legend>
+      <p class="muted small">Pick existing ones or type a new tag. "Everything" is added automatically.</p>
+      <div data-rows-target="list" class="rows">
+        <% @submission.category_names.each do |name| %>
+          <%= render "row", field: "category_names", value: name, placeholder: "e.g. science, pokemon", list: "category-suggestions" %>
+        <% end %>
+      </div>
+      <template data-rows-target="template"><%= render "row", field: "category_names", value: "", placeholder: "Another tag", list: "category-suggestions" %></template>
+      <button type="button" class="link-button" data-action="rows#add">+ Add a tag</button>
+      <datalist id="category-suggestions">
+        <% @suggestions.each do |name| %><option value="<%= name %>"></option><% end %>
+      </datalist>
+    </fieldset>
+
+    <%= form.label :picture_url, "Picture link (optional)" %>
+    <%= form.url_field :picture_url, placeholder: "https://…" %>
+
+    <%= form.submit "Add question", class: "button" %>
+  <% end %>
+</section>

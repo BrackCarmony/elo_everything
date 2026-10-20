@@ -2,7 +2,11 @@
 <section class="card row">
   <div>
     <h1><%= @category.name.titleize %></h1>
-    <p class="muted"><%= number_with_delimiter(@category.questions_count) %> questions</p>
+    <p class="muted"><%= number_with_delimiter(@category.questions_count) %> questions<%= " · tag" if @category.tag? %></p>
+    <% if @category.tag? %>
+      <p class="small muted"><%= pluralize(@category.questions_until_promotion, "more question") %> until this becomes a main category.</p>
+      <div class="progress"><span style="width: <%= [ 100 * @category.questions_count / Category::PROMOTION_THRESHOLD, 100 ].min %>%"></span></div>
+    <% end %>
   </div>
   <div class="right">
     <% if @my_rating %>

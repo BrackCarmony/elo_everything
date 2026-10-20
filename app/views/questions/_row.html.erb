@@ -1,0 +1,4 @@
+<div class="input-row" data-row>
+  <%= text_field_tag "question_submission[#{field}][]", value, placeholder:, list: local_assigns[:list], "aria-label": placeholder, maxlength: 200 %>
+  <button type="button" class="icon-button" data-action="rows#remove" aria-label="Remove">×</button>
+</div>
