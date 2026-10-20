@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Deploys the committed HEAD to the Elo droplet and rolls back if the new release doesn't answer.
+#   bin/deploy            # deploy
+#   ELO_HOST=1.2.3.4 bin/deploy
+# Releases live in /srv/elo_everything/releases/<sha>; "current" is a symlink to the live one.
+set -euo pipefail
+
+HOST="${ELO_HOST:-elo-rails}"   # ssh alias for the droplet (see README)
+APP_DIR=/srv/elo_everything
+SHA=$(git rev-parse --short HEAD)
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Commit or stash your changes first; only committed code is deployed." >&2
+  exit 1
+fi
+
+echo "Deploying $SHA to $HOST..."
+git archive --format=tar HEAD | ssh "$HOST" "sudo -u elo bash -c 'rm -rf $APP_DIR/releases/$SHA && mkdir -p $APP_DIR/releases/$SHA && tar -x -C $APP_DIR/releases/$SHA'"
+
+ssh "$HOST" "sudo -iu elo bash -s" <<REMOTE
+set -euo pipefail
+export PATH=/opt/rubies/current/bin:\$PATH RAILS_ENV=production
+export BUNDLE_PATH=$APP_DIR/shared/bundle BUNDLE_DEPLOYMENT=1 BUNDLE_WITHOUT=development:test
+cd $APP_DIR/releases/$SHA
+ln -sfn $APP_DIR/shared/config/master.key config/master.key
+rm -rf log tmp storage && ln -sfn $APP_DIR/shared/log log && ln -sfn $APP_DIR/shared/tmp tmp && ln -sfn $APP_DIR/shared/storage storage
+bundle install --quiet
+bin/rails assets:precompile
+bin/rails db:prepare
+PREVIOUS=\$(readlink $APP_DIR/current || true)
+ln -sfn $APP_DIR/releases/$SHA $APP_DIR/current
+sudo /usr/bin/systemctl restart elo_everything
+
+for i in \$(seq 1 30); do
+  if curl -fsS http://127.0.0.1:3000/up >/dev/null 2>&1; then
+    echo "Release $SHA is live."
+    # Keep the five newest releases.
+    ls -1dt $APP_DIR/releases/* | tail -n +6 | xargs -r rm -rf
+    exit 0
+  fi
+  sleep 2
+done
+
+echo "Release $SHA didn't answer on /up; rolling back to \$PREVIOUS" >&2
+if [ -n "\$PREVIOUS" ]; then ln -sfn "\$PREVIOUS" $APP_DIR/current && sudo /usr/bin/systemctl restart elo_everything; fi
+exit 1
+REMOTE
