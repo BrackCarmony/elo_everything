@@ -5,7 +5,7 @@
 # Releases live in /srv/elo_everything/releases/<sha>; "current" is a symlink to the live one.
 set -euo pipefail
 
-HOST="${ELO_HOST:-elo-rails}"   # ssh alias for the droplet (see README)
+HOST="${ELO_HOST:-jk}"   # ssh alias for the "jk" droplet (see README)
 APP_DIR=/srv/elo_everything
 SHA=$(git rev-parse --short HEAD)
 

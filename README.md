@@ -18,26 +18,27 @@ bin/rails test
 
 ## Deploying (elo.brackcarmony.com)
 
-Runs on its own Ubuntu 24.04 droplet (the older `elo` droplet is Ubuntu 14.04 and can't run Ruby 4).
+Runs on its own Ubuntu 24.04 droplet called **jk** (143.198.189.28). Despite the name, the older `elo` droplet doesn't host
+this app: it's Ubuntu 14.04 and can't run Ruby 4.
 Puma runs under systemd as the `elo` user behind nginx, with Postgres on the same box and HTTPS from Let's Encrypt.
 
 Add an ssh alias so `bin/deploy` can find it:
 
 ```
-Host elo-rails
-  HostName <droplet ip>
+Host jk
+  HostName 143.198.189.28
   User root
 ```
 
 One-time setup:
 
 ```sh
-ssh elo-rails 'bash -s' < deploy/setup-server.sh                 # Ruby, Postgres, nginx, systemd unit (~15 min, builds Ruby)
-scp config/master.key elo-rails:/srv/elo_everything/shared/config/ && ssh elo-rails 'chown elo:elo /srv/elo_everything/shared/config/master.key && chmod 600 /srv/elo_everything/shared/config/master.key'
+ssh jk 'bash -s' < deploy/setup-server.sh                 # Ruby, Postgres, nginx, systemd unit (~15 min, builds Ruby)
+scp config/master.key jk:/srv/elo_everything/shared/config/ && ssh jk 'chown elo:elo /srv/elo_everything/shared/config/master.key && chmod 600 /srv/elo_everything/shared/config/master.key'
 bin/deploy                                                         # first release; creates the database
-scp ~/side/elo-db-dump/elo-dump-2026-10-13.tgz elo-rails:/tmp/ && ssh elo-rails 'mkdir -p /tmp/elo-dump && tar -xzf /tmp/elo-dump-2026-10-13.tgz -C /tmp/elo-dump && chmod -R a+rX /tmp/elo-dump'
-ssh elo-rails "sudo -iu elo bash -c 'cd /srv/elo_everything/current && PATH=/opt/rubies/current/bin:\$PATH RAILS_ENV=production BUNDLE_PATH=/srv/elo_everything/shared/bundle BUNDLE_DEPLOYMENT=1 DUMP_DIR=\$(dirname \$(find /tmp/elo-dump -name questions.bson)) bin/rails elo:import'"
-ssh elo-rails certbot --nginx -d elo.brackcarmony.com             # after DNS points at the droplet
+scp ~/side/elo-db-dump/elo-dump-2026-10-13.tgz jk:/tmp/ && ssh jk 'mkdir -p /tmp/elo-dump && tar -xzf /tmp/elo-dump-2026-10-13.tgz -C /tmp/elo-dump && chmod -R a+rX /tmp/elo-dump'
+ssh jk "sudo -iu elo bash -c 'cd /srv/elo_everything/current && PATH=/opt/rubies/current/bin:\$PATH RAILS_ENV=production BUNDLE_PATH=/srv/elo_everything/shared/bundle BUNDLE_DEPLOYMENT=1 DUMP_DIR=\$(dirname \$(find /tmp/elo-dump -name questions.bson)) bin/rails elo:import'"
+ssh jk certbot --nginx -d elo.brackcarmony.com             # after DNS points at the droplet
 ```
 
 After that, every deploy is `bin/deploy`: it ships the committed HEAD, runs `bundle install`, precompiles assets,
